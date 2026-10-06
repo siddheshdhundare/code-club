@@ -15,6 +15,10 @@ An existing Express/JSON-backed coding competition website with separate SY/C++ 
 
 `GET /api/health/supabase` checks read access to the required Supabase tables without returning table data. Student and competition records are still stored in `data/db.json`; moving them into Supabase requires matching table columns and restrictive Row Level Security policies.
 
+## Render deployment
+
+Render must provide a stable `SESSION_SECRET` environment variable; do not rely on the local fallback secret in production. The Express app trusts the single Render proxy hop and uses secure, HTTP-only, same-site cookies in production. Keep the same secret across deploys and instances or existing admin/student sessions will no longer validate. The server listens on Render's `PORT` environment variable, falling back to port 3000 locally.
+
 ## Create and run a competition
 
 1. Sign in to the Admin Panel.

@@ -29,6 +29,7 @@ public class Main {
 async function api(url, options = {}) {
   const r = await fetch(url, {
     ...options,
+    credentials: "same-origin",
     headers: {"Content-Type":"application/json", ...(options.headers || {})}
   });
   const data = await r.json().catch(() => ({}));

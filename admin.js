@@ -1,5 +1,5 @@
 async function api(url, options={}) {
-  const r = await fetch(url, {...options, headers:{"Content-Type":"application/json", ...(options.headers||{})}});
+  const r = await fetch(url, {...options, credentials:"same-origin", headers:{"Content-Type":"application/json", ...(options.headers||{})}});
   const d = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error(d.message || d.error || "Request failed");
   return d;
