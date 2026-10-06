@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Code Club — Admin</title><link rel="stylesheet" href="admin.css">
+<style>
+.problem-manager label{display:block;color:#aeb9c9;font-size:12px;margin:12px 0}.problem-manager input,.problem-manager textarea{display:block;width:100%;margin-top:7px;padding:11px;background:#080d14;border:1px solid #273247;border-radius:8px;color:#edf2f8;resize:vertical}.problem-manager input:focus,.problem-manager textarea:focus{outline:1px solid #607cff}.manager-hint{color:#8492a8;font-size:12px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.hidden-test-heading{margin-top:22px}.hidden-test-heading h3{margin:5px 0;color:#edf2f8}.hidden-test-card{background:#0a1019;border:1px solid #263247;border-radius:10px;padding:12px;margin:10px 0}.hidden-test-title{display:flex;justify-content:space-between;align-items:center;color:#dbe4f0;font-size:12px}.problem-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}.problem-actions button,.hidden-test-heading button{padding:10px 14px;border-radius:8px;background:#202a38;color:#fff}.problem-actions .primary{background:linear-gradient(135deg,#4d7cff,#8055ee)}.problem-actions .danger,.remove-test{background:#451a25;color:#ff8795}.problem-actions button:disabled{opacity:.45;cursor:not-allowed}.form-message{min-height:18px;color:#ff7385;font-size:12px}.form-message.success-message{color:#3cdd92}.problem-state{color:#77a7ff;font-size:12px;font-weight:700}.year-field{display:block;color:#8492a8;font-size:12px;margin:13px 0}.year-field select{display:block;width:100%;margin-top:7px;padding:13px 14px;background:#080d14;border:1px solid #273246;border-radius:10px;color:#fff}.language-badge{background:#151d29;color:#abb9cc;padding:8px 12px;border-radius:8px;font-size:12px}.language-badge b{color:#fff}.stats{grid-template-columns:repeat(4,1fr)}.table-wrap button.view{white-space:nowrap}@media(max-width:800px){.stats{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}}@media(max-width:520px){.stats{grid-template-columns:1fr 1fr}}
+.problem-tabs,.submission-filters{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.problem-tab,.filter-button{padding:10px 14px;border:1px solid #2a3547;border-radius:8px;background:#141d29;color:#aeb9c9;font-weight:800}.problem-tab.selected,.filter-button.selected{background:#263b69;border-color:#607cff;color:#fff}.problem-selection{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px;background:#0a1019;border:1px solid #263247;border-radius:9px}.problem-selection span{color:#77a7ff;font-size:12px}.modal-card #detailViolations{display:grid;gap:8px}.violation-detail{background:#111923;border:1px solid #263247;padding:11px;border-radius:8px;color:#cbd5e1;font-size:12px}.violation-detail small{display:block;color:#8b9ab0;margin-top:4px}@media(max-width:520px){.problem-selection{align-items:flex-start;flex-direction:column}}
+</style>
+<style>
+.problem-manager label,.competition-manager label{color:#53515a!important}.problem-manager input,.problem-manager textarea,.competition-manager input,.competition-manager textarea,.competition-manager select,.year-field select{background:#fff!important;border-color:#f1c6d5!important;color:#222!important}.manager-hint{color:#69717d!important}.hidden-test-card,.problem-selection{background:#fffafd!important;border-color:#f1c6d5!important}.hidden-test-title,.hidden-test-heading h3{color:#222!important}.problem-tabs button,.filter-button{background:#fff8fa!important;border-color:#f1c6d5!important;color:#765c67!important}.problem-tabs button.selected,.filter-button.selected{background:#e91e63!important;border-color:#e91e63!important;color:#fff!important}.problem-actions button,.hidden-test-heading button,.head button{background:#fce4ec!important;color:#c2185b!important}.problem-actions .primary,.login-box button{background:#e91e63!important;color:#fff!important}.problem-actions .danger,.remove-test{background:#fde8ed!important;color:#c62845!important}.form-message{color:#c62845!important}.form-message.success-message,.online,.accepted,.pass{color:#16834b!important}.wrong,.offline,.fail{color:#c62845!important}.stats div,.card,.login-box,.modal-card{background:#fff!important;border-color:#f1c6d5!important}.stats small,th,.manager-hint{color:#69717d!important}.stats b{color:#c2185b!important}.problem-state,.problem-selection span{color:#c2185b!important}.problem-selection,.code-display{background:#fff5f8!important}.code-display b{color:#c2185b!important}.table-wrap td{color:#4f535b!important}.modal-card pre{background:#fff9fb!important;color:#303039!important}
+</style>
+</head>
+<body>
+<div id="login" class="admin-login">
+  <div class="login-box">
+    <div class="logo">⚡</div><span>CODE CLUB ADMIN</span>
+    <h1>Competition Control Center</h1>
+    <input id="user" placeholder="Username">
+    <input id="pass" type="password" placeholder="Password">
+    <button onclick="login()">Admin Login</button>
+    <p id="err"></p>
+  </div>
+</div>
+
+<div id="dashboard" class="hidden">
+<header><div><b>⚡ Code Club</b><span>Admin Control Center</span></div><button onclick="logout()">Logout</button></header>
+<main>
+  <section class="card competition-manager">
+    <div class="head"><div><span>COMPETITION LIFECYCLE</span><h2>Create / Manage Competition</h2></div><span id="competitionStatus" class="problem-state">No competition selected</span></div>
+    <form id="competitionForm">
+      <div class="form-grid">
+        <label>Competition Name<input id="competitionName" required maxlength="120" placeholder="CodeBomb Round 3"></label>
+        <label>Year<select id="competitionYear" required><option value="SY">SY — C++</option><option value="TY">TY — Java</option></select></label>
+        <label>Duration (minutes)<input id="competitionDuration" type="number" min="1" max="1440" step="1" value="30" required></label>
+      </div>
+      <label>Description <small>(optional)</small><textarea id="competitionDescription" rows="2"></textarea></label>
+      <button class="primary" type="submit">Create Competition</button>
+      <p id="competitionError" class="form-message"></p>
+    </form>
+    <div class="form-grid competition-controls">
+      <label>Select Competition<select id="competitionSelect" onchange="selectCompetition(this.value)"><option value="">No competitions</option></select></label>
+      <div class="code-display"><span>COMPETITION CODE</span><b id="competitionCodeDisplay">—</b><small id="competitionDescriptionDisplay"></small></div>
+    </div>
+    <div class="problem-actions">
+      <button id="generateCompetitionCodeButton" type="button" onclick="generateCompetitionCode()">Generate Code</button>
+      <button id="startCompetitionButton" class="primary" type="button" onclick="startCompetition()">START COMPETITION</button>
+      <button id="endCompetitionButton" class="danger" type="button" onclick="endCompetition()">End Competition</button>
+    </div>
+    <div class="head"><div><span>LIFECYCLE STATUS</span><h2 id="competitionLifecycleSummary">Select a competition</h2></div></div>
+    <h3 class="year-competition-heading">SY Competition <small>C++</small></h3>
+    <div class="table-wrap"><table><thead><tr><th>Competition</th><th>Year / Language</th><th>Code</th><th>Status</th><th>Duration</th><th>Start Time</th><th>End Time</th><th>Participants</th><th>Submissions</th><th>Manage</th></tr></thead><tbody id="syCompetitionRows"></tbody></table></div>
+    <h3 class="year-competition-heading">TY Competition <small>Java</small></h3>
+    <div class="table-wrap"><table><thead><tr><th>Competition</th><th>Year / Language</th><th>Code</th><th>Status</th><th>Duration</th><th>Start Time</th><th>End Time</th><th>Participants</th><th>Submissions</th><th>Manage</th></tr></thead><tbody id="tyCompetitionRows"></tbody></table></div>
+    <div id="legacyCompetitionSection" class="hidden">
+      <h3 class="year-competition-heading">Unassigned Existing Competitions</h3>
+      <div class="table-wrap"><table><thead><tr><th>Competition</th><th>Code</th><th>Status</th><th>Assign Year</th></tr></thead><tbody id="legacyCompetitionRows"></tbody></table></div>
+    </div>
+  </section>
+
+  <section id="problemManager" class="card problem-manager">
+    <div class="head"><div><span>YEAR-SPECIFIC CHALLENGES</span><h2>Manage Problems</h2></div></div>
+    <p class="manager-hint">Select an SY or TY competition to manage its problem and hidden tests. Selecting a year tab while an unassigned competition is selected will ask to assign it to that year; year assignments cannot be changed later. Hidden tests are returned to authenticated admins only.</p>
+    <label class="competition-problem-select">Competition<select id="problemCompetitionSelect" onchange="selectProblemCompetition(this.value)"><option value="">Select a competition</option></select></label>
+    <div class="problem-tabs" role="tablist" aria-label="Select year problem">
+      <button id="tabSY" class="problem-tab selected" type="button" role="tab" aria-selected="true" onclick="selectProblemYear('SY')">SY — C++ PROBLEM</button>
+      <button id="tabTY" class="problem-tab" type="button" role="tab" aria-selected="false" onclick="selectProblemYear('TY')">TY — JAVA PROBLEM</button>
+    </div>
+    <div class="problem-selection"><b id="problemYearHeading">SY — C++</b><span id="problemState">No problem saved</span></div>
+    <form id="problemForm">
+      <label>Problem Title<input id="problemTitle" required maxlength="200"></label>
+      <label>Complete Problem Statement<textarea id="problemStatement" required rows="5"></textarea></label>
+      <div class="form-grid">
+        <label>Input Format<textarea id="problemInputFormat" required rows="4"></textarea></label>
+        <label>Output Format<textarea id="problemOutputFormat" required rows="4"></textarea></label>
+      </div>
+      <label>Constraints <small>(one per line)</small><textarea id="problemConstraints" required rows="4"></textarea></label>
+      <div class="form-grid">
+        <label>Sample Input<textarea id="sampleInput" required rows="4"></textarea></label>
+        <label>Sample Output<textarea id="sampleOutput" required rows="4"></textarea></label>
+      </div>
+      <div class="head hidden-test-heading"><div><span>SERVER-SIDE ONLY</span><h3>Hidden Test Cases</h3></div><button type="button" onclick="addHiddenTest()">Add Test Case</button></div>
+      <div id="hiddenTestsEditor"></div>
+      <div class="problem-actions">
+        <button id="saveProblemButton" class="primary" type="submit">Save Problem</button>
+        <button type="button" onclick="resetProblemFields()">Clear / Reset Fields</button>
+        <button id="clearActiveProblemButton" class="danger" type="button" onclick="clearActiveProblem()">Clear SY Problem</button>
+      </div>
+      <p id="problemError" class="form-message"></p>
+    </form>
+  </section>
+
+  <div class="stats">
+    <div><small>TOTAL COMPETITIONS</small><b id="sCompetitions">0</b></div>
+    <div><small>ACTIVE COMPETITIONS</small><b id="sActiveCompetitions">0</b></div>
+    <div><small>PARTICIPANTS</small><b id="sParticipants">0</b></div>
+    <div><small>ONLINE</small><b id="sOnline">0</b></div>
+    <div><small>SUBMISSIONS</small><b id="sSubmissions">0</b></div>
+    <div><small>ACCEPTED</small><b id="sAccepted">0</b></div>
+    <div><small>WRONG ANSWER</small><b id="sWrongAnswer">0</b></div>
+    <div><small>COMPILATION ERRORS</small><b id="sCompilationErrors">0</b></div>
+    <div><small>RUNTIME ERRORS</small><b id="sRuntimeErrors">0</b></div>
+    <div><small>VIOLATIONS</small><b id="sViolations">0</b></div>
+  </div>
+
+  <section class="card">
+    <div class="head"><div><span>LIVE MONITOR</span><h2>Participants</h2></div><button onclick="load()">Refresh</button></div>
+    <div class="table-wrap"><table><thead><tr><th>Participant</th><th>Roll / Team ID</th><th>Year</th><th>Competition</th><th>Status</th><th>Violations</th><th>Last Seen</th></tr></thead><tbody id="participants"></tbody></table></div>
+  </section>
+
+  <section class="card">
+    <div class="head"><div><span>JUDGE</span><h2>Submissions</h2></div></div>
+    <div class="filters-row">
+      <label>Competition<select id="submissionCompetitionFilter" onchange="load()"><option value="">All competitions</option></select></label>
+      <label>Language<select id="submissionLanguageFilter" onchange="filterSubmissions()"><option value="ALL">All languages</option><option value="cpp">C++</option><option value="java">Java</option></select></label>
+      <label>Result<select id="submissionResultFilter" onchange="filterSubmissions()"><option value="ALL">All results</option><option value="Accepted">Accepted</option><option value="Wrong Answer">Wrong Answer</option><option value="COMPILE_ERROR">Compile Error</option><option value="RUNTIME_ERROR">Runtime Error</option><option value="TIME_LIMIT">Time Limit</option></select></label>
+    </div>
+    <div class="submission-filters" role="group" aria-label="Filter submissions by year">
+      <button class="filter-button selected" data-year="ALL" type="button" onclick="filterSubmissions('ALL')">All years</button>
+      <button class="filter-button" data-year="SY" type="button" onclick="filterSubmissions('SY')">SY</button>
+      <button class="filter-button" data-year="TY" type="button" onclick="filterSubmissions('TY')">TY</button>
+    </div>
+    <div class="table-wrap"><table><thead><tr><th>Submission Time</th><th>Student</th><th>Roll / Team ID</th><th>Year</th><th>Language</th><th>Problem</th><th>Result</th><th>Passed / Total</th><th></th></tr></thead><tbody id="submissions"></tbody></table></div>
+  </section>
+
+  <section class="card">
+    <div class="head"><div><span>SECURITY</span><h2>Cheating / Violation Events</h2></div></div>
+    <div class="table-wrap"><table><thead><tr><th>Time</th><th>Participant</th><th>Roll / Team ID</th><th>Year</th><th>Competition</th><th>Event</th></tr></thead><tbody id="violations"></tbody></table></div>
+  </section>
+
+  <div id="detail" class="modal hidden">
+    <div class="modal-card">
+      <button class="close" onclick="closeDetail()">×</button>
+      <span>SUBMISSION DETAILS</span><h2 id="detailTitle">—</h2>
+      <h3>Student Information</h3><pre id="detailStudent"></pre>
+      <div id="detailMeta"></div>
+      <h3>Problem Statement</h3><pre id="detailProblem"></pre>
+      <h3>Input Format</h3><pre id="detailInputFormat"></pre>
+      <h3>Output Format</h3><pre id="detailOutputFormat"></pre>
+      <h3>Constraints</h3><pre id="detailConstraints"></pre>
+      <h3>Sample</h3><pre id="detailSample"></pre>
+      <h3>Student Code</h3><pre id="detailCode"></pre>
+      <h3>Test Results</h3><div id="detailTests"></div>
+      <h3>Security Monitoring Signals</h3><div id="detailViolations"></div>
+    </div>
+  </div>
+</main>
+</div>
+<script src="admin.js"></script>
+</body>
+</html>

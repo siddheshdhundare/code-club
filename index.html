@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CodeBomb — Round 3</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.year-field{display:block;color:#69717d;font-size:12px;margin:13px 0}.year-field select{display:block;width:100%;margin-top:7px;padding:13px 14px;background:#fff;border:1px solid #f1c6d5;border-radius:10px;color:#222}
+</style>
+</head>
+<body>
+<div id="competitionCodeScreen" class="login-screen">
+  <div class="login-card">
+    <div class="brand-mark">💣</div>
+    <div class="eyebrow">CODEBOMB • ROUND 3</div>
+    <h1>Join the Competition</h1>
+    <p>Enter the joining code provided by your teacher.</p>
+    <label class="year-field" for="competitionCode">Competition Code
+      <input id="competitionCode" inputmode="numeric" autocomplete="one-time-code" maxlength="12" placeholder="e.g. 24623">
+    </label>
+    <button class="primary" onclick="joinCompetition()">Join Competition</button>
+    <a href="/admin" class="admin-link">Admin Panel</a>
+    <div id="competitionCodeError" class="error-text"></div>
+  </div>
+</div>
+
+<div id="loginScreen" class="login-screen hidden">
+  <div class="login-card">
+    <div class="brand-mark">💣</div>
+    <div class="eyebrow">CODEBOMB • ROUND 3</div>
+    <h1>Student Login</h1>
+    <p id="joinedCompetitionLabel"></p>
+    <p>Enter your participant details to start the challenge.</p>
+    <input id="studentName" placeholder="Your name" maxlength="60">
+    <input id="teamName" placeholder="Roll No / Team ID" maxlength="30">
+    <label class="year-field" for="studentYear">Year
+      <select id="studentYear" required>
+        <option value="">Select your year</option>
+        <option value="SY">SY</option>
+        <option value="TY">TY</option>
+      </select>
+    </label>
+    <button class="primary" onclick="studentLogin()">Enter Competition</button>
+    <a href="/admin" class="admin-link">Admin Panel</a>
+    <div id="loginError" class="error-text"></div>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-icon">💣</div>
+    <div><b>CodeBomb</b><span id="competitionLabel">Round 3 • Coding Challenge</span></div>
+  </div>
+  <div class="top-right">
+    <div><div class="muted">PARTICIPANT</div><b id="participantLabel">—</b></div>
+    <div class="timer"><small>TIME LEFT</small><b id="timer">30:00</b></div>
+  </div>
+</header>
+
+<main class="layout">
+  <section class="panel problem">
+    <div class="panel-head"><div><span class="eyebrow">CHALLENGE</span><h2 id="problemTitle">Loading…</h2></div></div>
+    <p id="statement"></p>
+    <h4>Input Format</h4><p id="inputFormat"></p>
+    <h4>Output Format</h4><p id="outputFormat"></p>
+    <h4>Constraints</h4><ul id="constraints"></ul>
+    <h4>Example</h4>
+    <div class="example"><pre id="exampleInput"></pre><pre id="exampleOutput"></pre></div>
+    <div class="notice">Hidden test cases are evaluated on the server. They are not exposed to participants.</div>
+  </section>
+
+  <section class="panel editor">
+    <div class="panel-head">
+      <div><span class="eyebrow">SOLUTION</span><h2>Code Editor</h2></div>
+      <span class="language-badge">Language: <b id="languageName">C++</b></span>
+    </div>
+    <textarea id="code" spellcheck="false"></textarea>
+    <div class="editor-foot">
+      <button class="primary" onclick="submitCode()" id="submitBtn">Submit Solution</button>
+    </div>
+  </section>
+
+  <section class="panel result">
+    <div class="panel-head"><div><span class="eyebrow">JUDGE RESULT</span><h2>Submission</h2></div><span id="status" class="status waiting">Waiting</span></div>
+    <div id="resultSummary" class="result-summary">Submit your solution to run it against the hidden test suite.</div>
+    <div id="tests" class="tests"></div>
+    <pre id="console">No submission yet.</pre>
+  </section>
+
+  <section class="panel security">
+    <div class="panel-head"><div><span class="eyebrow">INTEGRITY MONITOR</span><h2>Competition Security</h2></div><span id="violations" class="violation">0 violations</span></div>
+    <p>Leaving the competition page, changing focus, or attempting restricted browser actions may be recorded for the admin.</p>
+    <div id="securityLog" class="security-log">Monitoring active.</div>
+  </section>
+</main>
+<footer>Code Club • Secure Competition Environment</footer>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
