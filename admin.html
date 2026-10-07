@@ -109,7 +109,8 @@
   </section>
 
   <section class="card">
-    <div class="head"><div><span>JUDGE</span><h2>Submissions</h2></div></div>
+    <div class="head"><div><span>JUDGE</span><h2>Submissions</h2></div><button id="exportExcelButton" type="button" onclick="exportExcel()">Export Excel</button></div>
+    <p id="exportExcelMessage" class="export-message" role="status" aria-live="polite"></p>
     <div class="filters-row">
       <label>Competition<select id="submissionCompetitionFilter" onchange="load()"><option value="">All competitions</option></select></label>
       <label>Language<select id="submissionLanguageFilter" onchange="filterSubmissions()"><option value="ALL">All languages</option><option value="cpp">C++</option><option value="java">Java</option></select></label>

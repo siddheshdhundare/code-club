@@ -5,6 +5,7 @@ const cookieSession = require("cookie-session");
 const fs = require("fs");
 const path = require("path");
 const { checkSupabaseConnection } = require("./supabase");
+const { createResultsWorkbook } = require("./excel-export");
 
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
@@ -967,6 +968,24 @@ app.get("/api/admin/dashboard", requireAdmin, (req, res) => {
       violations: storedViolations.length
     }
   });
+});
+
+app.get("/api/admin/export", requireAdmin, (req, res) => {
+  if (!fs.existsSync(DB_FILE)) {
+    return res.status(404).json({ error: "Local competition data file not found." });
+  }
+
+  let workbook;
+  try {
+    workbook = createResultsWorkbook(readDB());
+  } catch (error) {
+    console.error("Admin Excel export failed:", error);
+    return res.status(500).json({ error: `Could not create Excel export: ${error.message}` });
+  }
+
+  res.type("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+  res.set("Content-Disposition", 'attachment; filename="CodeBomb_Round3_Results.xlsx"');
+  res.send(workbook);
 });
 
 app.get("/api/admin/submissions/:id", requireAdmin, (req, res) => {

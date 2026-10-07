@@ -217,6 +217,37 @@ function filterSubmissions(year) {
   renderSubmissions();
 }
 
+async function exportExcel() {
+  const button = document.getElementById("exportExcelButton");
+  const message = document.getElementById("exportExcelMessage");
+  button.disabled = true;
+  message.classList.remove("success-message");
+  message.textContent = "";
+
+  try {
+    const response = await fetch("/api/admin/export", { credentials:"same-origin" });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.message || error.error || "Excel export failed.");
+    }
+
+    const file = URL.createObjectURL(await response.blob());
+    const link = document.createElement("a");
+    link.href = file;
+    link.download = "CodeBomb_Round3_Results.xlsx";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(file), 1000);
+    message.classList.add("success-message");
+    message.textContent = "Excel file downloaded.";
+  } catch (error) {
+    message.textContent = error.message;
+  } finally {
+    button.disabled = false;
+  }
+}
+
 async function loadCompetitions() {
   try {
     const data = await api("/api/admin/competitions");
